@@ -114,7 +114,6 @@ type Message struct {
 
 func (h apiHandler) notifyClients(msg Message) {
 	h.mu.Lock()
-	defer h.mu.Unlock()
 
 	subscribers, ok := h.subscribers[msg.RoomID]
 	if !ok || len(subscribers) == 0 {
@@ -127,7 +126,7 @@ func (h apiHandler) notifyClients(msg Message) {
 			cancel()
 		}
 	}
-
+	defer h.mu.Unlock()
 }
 
 func (h apiHandler) handleSubscribe(w http.ResponseWriter, r *http.Request) {
